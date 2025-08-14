@@ -278,21 +278,21 @@ class LangGraphAgent:
 
         self.active_run["schema_keys"] = self.get_schema_keys(config)
 
-        non_system_messages = [msg for msg in langchain_messages if not isinstance(msg, SystemMessage)]
-        if len(agent_state.values.get("messages", [])) > len(non_system_messages):
-            # Find the last user message by working backwards from the last message
-            last_user_message = None
-            for i in range(len(langchain_messages) - 1, -1, -1):
-                if isinstance(langchain_messages[i], HumanMessage):
-                    last_user_message = langchain_messages[i]
-                    break
+        # non_system_messages = [msg for msg in langchain_messages if not isinstance(msg, SystemMessage)]
+        # if len(agent_state.values.get("messages", [])) > len(non_system_messages):
+        #     # Find the last user message by working backwards from the last message
+        #     last_user_message = None
+        #     for i in range(len(langchain_messages) - 1, -1, -1):
+        #         if isinstance(langchain_messages[i], HumanMessage):
+        #             last_user_message = langchain_messages[i]
+        #             break
 
-            if last_user_message:
-                return await self.prepare_regenerate_stream(
-                    input=input,
-                    message_checkpoint=last_user_message,
-                    config=config
-                )
+        #     if last_user_message:
+        #         return await self.prepare_regenerate_stream(
+        #             input=input,
+        #             message_checkpoint=last_user_message,
+        #             config=config
+        #         )
 
         events_to_dispatch = []
         if has_active_interrupts and not resume_input:
@@ -613,7 +613,7 @@ class LangGraphAgent:
                 yield self._dispatch_event(
                     StateSnapshotEvent(type=EventType.STATE_SNAPSHOT, snapshot=self.get_state_snapshot(self.active_run["manually_emitted_state"]), raw_event=event)
                 )
-            
+
             yield self._dispatch_event(
                 CustomEvent(type=EventType.CUSTOM, name=event["name"], value=event["data"], raw_event=event)
             )
@@ -696,4 +696,3 @@ class LangGraphAgent:
                 return checkpoint
 
         raise ValueError("Message ID not found in history")
-
